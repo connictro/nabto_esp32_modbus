@@ -1,0 +1,1 @@
+../unabto-esp32/components/unabto-esp-idf/dns_adapter.c

@@ -1,0 +1,6 @@
+[submodule "components/unabto"]
+	path = components/unabto
+	url = https://github.com/nabto/unabto
+[submodule "components/unabto-esp32"]
+	path = components/unabto-esp32
+	url = https://github.com/nabto/unabto-esp32
