@@ -1,0 +1,22 @@
+menu "Wifi and Nabto Configurations"
+
+config ESP_MAXIMUM_RETRY
+    int "Maximum retry"
+    default 5
+    help
+	Set the Maximum retry to avoid station reconnecting to the AP unlimited when the AP is really inexistent.  
+
+config ESP_CONNECTION_TIMEOUT
+   int "Wifi Connection Timeout"
+   default 60
+   help
+       Maximum time trying to connect the AP with stored credentials one time.
+
+config NABTO_ID_DL_URL_PREFIX
+   string "URL prefix for Nabto credentials"
+   default "https://www.connictro.de/nabto/devices/"
+   help
+       Enter the URL prefix where device-specific credential files - containing Nabto IDs and keys - are stored.
+
+endmenu
+

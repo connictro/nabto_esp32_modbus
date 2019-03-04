@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<unabto_queries 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://www.nabto.com/unabto/query_model.xsd">
+
+  <!-- general queries -->
+
+  <!-- interface id version info that clients must match -->
+  <query name="get_interface_info.json" id="0">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="interface_id" type="raw"/>
+      <parameter name="interface_version_major" type="uint16"/>
+      <parameter name="interface_version_minor" type="uint16"/>
+    </response>
+  </query>
+
+  <!-- public info for discovery -->
+  <query name="get_public_device_info.json" id="10000">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="device_name" type="raw"/>
+      <parameter name="device_type" type="raw"/>
+      <parameter name="device_icon" type="raw"/>
+      <parameter name="is_open_for_pairing" type="uint8"/>      
+      <parameter name="is_current_user_paired" type="uint8"/>
+      <parameter name="is_current_user_owner" type="uint8"/>
+    </response>
+  </query>
+
+  <!-- set general info -->
+  <query name="set_device_info.json" id="10010">
+    <request>
+      <parameter name="device_name" type="raw"/>
+    </request>
+    <response format="json">
+      <parameter name="device_name" type="raw"/>
+    </response>
+  </query>
+
+  <!-- access control related queries -->
+
+
+  <!--
+
+  status field in acl related queries:
+
+  enum fp_acl_response_status {
+    FP_ACL_STATUS_OK = 0,
+    FP_ACL_STATUS_NO_SUCH_USER = 1,
+    FP_ACL_STATUS_USER_DB_FULL = 2,
+    FP_ACL_STATUS_SAVE_FAILED = 3,
+    FP_ACL_STATUS_REMOVE_FAILED = 4
+  };
+
+  permission bits in acl and system settings related queries:
+
+    #define FP_ACL_PERMISSION_NONE                                      0x00000000ul
+    #define FP_ACL_PERMISSION_ALL                                       0xfffffffful
+    #define FP_ACL_PERMISSION_LOCAL_ACCESS                              0x80000000ul
+    #define FP_ACL_PERMISSION_REMOTE_ACCESS                             0x40000000ul
+    #define FP_ACL_PERMISSION_ADMIN                                     0x20000000ul
+    
+    #define FP_ACL_SYSTEM_PERMISSION_NONE                               0x00000000ul
+    #define FP_ACL_SYSTEM_PERMISSION_ALL                                0xfffffffful
+    #define FP_ACL_SYSTEM_PERMISSION_LOCAL_ACCESS                       0x80000000ul
+    #define FP_ACL_SYSTEM_PERMISSION_REMOTE_ACCESS                      0x40000000ul
+    #define FP_ACL_SYSTEM_PERMISSION_PAIRING                            0x20000000ul
+
+  -->
+
+  <!-- get all users that have access to device -->
+  <query name="get_users.json" id="11000">
+    <request>
+      <parameter name="count" type="uint8"/> 
+      <parameter name="start" type="uint32"/> 
+    </request>
+    <response format="json">
+      <list name="users">
+        <parameter name="fingerprint" type="raw" representation="hex"/>
+        <parameter name="name" type="raw"/>
+        <parameter name="permissions" type="uint32"/>
+      </list>
+    </response>
+  </query>
+
+  <!-- pair client (user) with this device -->
+  <query name="pair_with_device.json" id="11010">
+    <request>
+      <parameter name="name" type="raw"/>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="name" type="raw"/>
+      <parameter name="permissions" type="uint32"/>
+    </response>
+  </query>
+  
+  <!-- get current user -->
+  <query name="get_current_user.json" id="11020">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="name" type="raw"/>
+      <parameter name="permissions" type="uint32"/>
+    </response>
+  </query>
+  
+  <!-- get system security settings -->
+  <query name="get_system_security_settings.json" id="11030">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/> 
+      <parameter name="permissions" type="uint32"/> 
+      <parameter name="default_user_permissions_after_pairing" type="uint32"/>
+    </response>
+  </query>
+
+  <!-- set system security settings -->
+  <query name="set_system_security_settings.json" id="11040">
+    <request>
+      <parameter name="permissions" type="uint32"/> 
+      <parameter name="default_user_permissions_after_pairing" type="uint32"/>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/> 
+      <parameter name="permissions" type="uint32"/> 
+      <parameter name="default_user_permissions_after_pairing" type="uint32"/>
+    </response>
+  </query>
+
+  <!-- set user permissions -->
+  <query name="set_user_permissions.json" id="11050">
+    <request>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="permissions" type="uint32"/> 
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="name" type="raw"/>
+      <parameter name="permissions" type="uint32"/>
+    </response>
+  </query>
+
+  <!-- set user name -->
+  <query name="set_user_name.json" id="11060">
+    <request>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="name" type="raw"/>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+      <parameter name="name" type="raw"/>
+      <parameter name="permissions" type="uint32"/>
+    </response>
+  </query>
+
+  <!-- remove user -->
+  <query name="remove_user.json" id="11070">
+    <request>
+      <parameter name="fingerprint" type="raw" representation="hex"/>
+    </request>
+    <response format="json">
+      <parameter name="status" type="uint8"/>
+    </response>
+  </query>
+
+ 
+  <!-- Modbus demo queries RAW FRAMES -->
+  <query name="modbus_function.json" description="Execute a function on the specified Modbus device using raw frame." id="20000">
+    <request>
+      <parameter name="bus" type="uint8"/>
+      <parameter name="address" type="uint8"/>
+      <parameter name="data" type="raw" representation="hex"/>
+    </request>
+    <response format="json">
+      <parameter name="bus" type="uint8"/>
+      <parameter name="address" type="uint8"/>
+      <!-- uint8 address, uint8 functionCode, uint8[] data -->
+      <!-- uint8 address, uint8 functionCode, uint8 exceptionCode -->
+      <parameter name="result" type="uint8"/>
+      <parameter name="data" type="raw" representation="hex"/>
+      <parameter name="queryStatus" type="uint8"/>
+    </response>
+  </query>
+
+
+  <!-- Modbus configuration -->
+  <query name="modbus_configuration.json" description="Returns the modbus configuration" id="20001">
+    <request>
+    </request>
+    <response format="json">
+      <parameter name="data" type="raw" />
+    </response>
+  </query>
+
+  <!-- Modbus demo queries FORMATTED LISTS -->
+  <query name="modbus_function_formatted.json" description="Execute a function on the specified Modbus device using formatted list." id="20002">
+    <request>
+      <parameter name="bus" type="uint8"/>
+      <parameter name="address" type="uint8"/>
+      <parameter name="functioncode" type="uint8"/>
+      <parameter name="read_start" type="uint16"/>
+      <parameter name="read_len" type="uint16"/>
+      <parameter name="write_start" type="uint16"/>
+      <parameter name="write_len" type="uint16"/>
+      <list name="data"/>
+         <parameter name="item" type="uint16"/>
+      </list>
+
+    </request>
+    <response format="json">
+      <parameter name="bus" type="uint8"/>
+      <parameter name="address" type="uint8"/>
+      <parameter name="result" type="uint8"/>
+      <list name="data"/>
+         <parameter name="item" type="uint16"/>
+      </list>
+      <parameter name="queryStatus" type="uint8"/>
+    </response>
+  </query>
+
+</unabto_queries>
+
