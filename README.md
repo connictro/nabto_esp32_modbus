@@ -11,12 +11,8 @@
 ### Install the project:
 1. Make sure the preconditions on your system for ESP32 esp-idf are met, see also https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
 2. Clone the repository nabto_esp32_modbus by git clone https://github.com/connictro/nabto_esp32_modbus
-3. Clone https://github.com/nabto/unabto into nabto_esp32_modbus/components
-4. Clone https://github.com/nabto/unabto-esp-idf into nabto_esp32_modbus/components
-5. In components/unabto-esp-idf remove "unabto_config.h" and replace by a symlink to the main project's unabto_config.h file:
-   cd components/unabto-esp-idf; ln -s ../../main/unabto_config.h; cd ../..
-6. In components/unabto set the branch to version 4.2 (newer branches not yet supported by unabto-esp-idf and modbus application yet)
-   cd components/unabto; git checkout -b 4.2; cd ..
+3. In components/unabto set the branch to version 4.2 (newer branches not yet supported by unabto-esp-idf and modbus application yet)
+   cd components/unabto; git checkout 4.2; cd ../..
 7. (You can do this while compiling the device below) Download the Nabto Modbus demo app from: <t.b.d.> and install on your mobile phone.
    It is available for Android and iOS.
 
