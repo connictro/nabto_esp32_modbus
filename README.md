@@ -1,6 +1,6 @@
 ## Nabto ESP32 Modbus gateway
 
-## Brief description:
+### Brief description:
  Uses the dual-role FreeModbus port by Connictro GmbH (based on FreeModbus, and armink's / erfengwe's Master ports).
  The demo allows to control Modbus slave devices from an Espressif ESP32 running in master mode via mobile phone app.
  The example also includes Wifi Setup via SoftAP - the user can connect to ESP32 access point, select Wifi SSID and enter password, which will be stored in NVS.
@@ -10,14 +10,16 @@
 
 ### Install the project:
 1. Make sure the preconditions on your system for ESP32 esp-idf are met, see also https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
-2. Clone the repository nabto_esp32_modbus by git clone https://github.com/connictro/nabto_esp32_modbus
-3. In components/unabto set the branch to version 4.2 (newer branches not yet supported by unabto-esp-idf and modbus application yet)
+2. Clone the repository nabto_esp32_modbus by:
+   git clone --recursive https://github.com/connictro/nabto_esp32_modbus
+   There will be an error message about recursion in submodule "components/unabto-esp32" but that can be ignored. 
+3. In components/unabto set the branch to version 4.2 (newer branches not yet supported by unabto-esp-idf and modbus application yet):
    cd components/unabto; git checkout 4.2; cd ../..
 7. (You can do this while compiling the device below) Download the Nabto Modbus demo app from: <t.b.d.> and install on your mobile phone.
    It is available for Android and iOS.
 
 
-## Preconditions
+### Preconditions
 * 1. Additionally to the ESP32, you'll need some Modbus devices and an 3.3V-to-RS485 level shifter (preferably automatic mode who don't need the
      RTS signal, just TxD and RxD). 
      Example: https://www.ebay.de/itm/TTL-RS485-Adapter-485-UART-Seriell-3-3V-5-Volt-Level-Konverter-Modul-Arduino/252852473229?hash=item3adf2e8d8d:g:DQwAAOSw5UFb4H25:rk:2:pf:1&frcectupt=true 
@@ -44,16 +46,16 @@ We used the following devices:
 If you use different devices, please adapt the .JSON file above accordingly.
 
 
-## Configure the project
+### Configure the project
 
 ``
 make menuconfig
 ```
 
-* Set Modbus options under Components-->Master/Slave Modbus configuration
+- Set Modbus options under Components-->Master/Slave Modbus configuration
   (NOTE: Modbus configuration is the original Freemodbus configuration which supports slave mode only and does not interface with Nabto).
   Typically serial port options and baudrate can be changed here (in the future it will be made configurable by configuration file instead).
-* Set "Wifi and Nabto Configurations"
+- Set "Wifi and Nabto Configurations"
   Retry and Timeout are related to Wifi configuration - after the configured amount of unsuccessful retries the Wifi credentials
   (SSID/Password) will be erased and the ESP32 enters Access point mode again.
   URL prefix is the path on a secure server where the Nabto credentials are stored.
@@ -71,19 +73,19 @@ make -j4 flash monitor
 (To exit the serial monitor, type ``Ctrl-]``.)
 
 
-## How to use the example:
-* 1. To connect to the gateway, start it and connect to the access point named "nabto-modbus-gw-<MAC address>". 
-*    The password is "modbusdemo".
-* 2. Select your preferred wifi network and enter its credentials. If this is successful, the ESP32 will
-*    store the credentials and reboot, it will now connect to the wifi and is ready to accept commands
-*    from the Nabto app in a couple of seconds.
-*    Behind the scenes, it will download the two config files (Nabto credentials, Modbus JSON), and store them in NVS,
-*    so they don't need to be downloaded again on subsequent starts.
-* 3. The application is supposed to send Modbus requests in JSON format down to the device.
-*    There are 2 options - raw and list-formatted. See also unabto_queries.xml for details.
-*    Raw Format (query 20000) is:
+### How to use the example:
+  1. To connect to the gateway, start it and connect to the access point named "nabto-modbus-gw-<MAC address>". 
+     The password is "modbusdemo".
+  2. Select your preferred wifi network and enter its credentials. If this is successful, the ESP32 will
+     store the credentials and reboot, it will now connect to the wifi and is ready to accept commands
+     from the Nabto app in a couple of seconds.
+     Behind the scenes, it will download the two config files (Nabto credentials, Modbus JSON), and store them in NVS,
+     so they don't need to be downloaded again on subsequent starts.
+  3. The application is supposed to send Modbus requests in JSON format down to the device.
+     There are 2 options - raw and list-formatted. See also unabto_queries.xml for details.
+     Raw Format (query 20000) is:
      <bus>, <slave address>, <raw modbus frame w/o CRC>
-*    List Format (query 20002) uses the schema:
+     List Format (query 20002) uses the schema:
      <bus>, <slave address> <function code>, <read start address>, <read length>, <write start address>, <write length>, [data ...]
      - Bus, Slave address, and function code are mandatory. Bus is currently ignored (only one bus on UART2 supported).
      - Read start address and read length have to be supplied for all read function codes 
@@ -94,23 +96,29 @@ make -j4 flash monitor
        Example for a single coil write ON to slave 24, address 3 send:  1, 24, 5, 0, 0, 3, 1, 1
        Example for a single holding register write (value 0xDE) to address 0xAD on slave 24 send: 1, 24, 6, 0, 0, 0xAD, 1, 0xDE
        Example to read 7 holding registers on address 0 from slave 23: 1, 23, 3, 0, 7, 0, 0
-*    Response for raw requests is:
+     Response for raw requests is:
      <bus>, <slave address>, <result code>, <raw data>, <query status>
-*    Response for list requests is:
+     Response for list requests is:
      <bus>, <slave address>, <result code>, <data list of type uint16>, <query status>
      where data is only returned for read commands, or the combined read/write function code 0x17. So data can be empty, and if data is returned it will be 
      the amount o elements requested in the according read command.
 
-## - Thanks to:
+### - Thanks to:
 - armink for the STM32 port               - see https://github.com/armink/FreeModbus_Slave-Master-RTT-STM32
 - erfengwe for the ESP32 port             - see https://github.com/erfengwelink/modbus_port_esp32
 - Tony Pottier for the ESP32 Wifi Manager - see https://github.com/tonyp7/esp32-wifi-manager
 - Nabto for the IoT platform              - see https://github.com/nabto
 
-## - Bugs
+### - Known Issues:
+- Currently based on an older (4.2) Nabto branch.
+- Sometimes delays in the Nabto framework observed after sending many commands in a short time (maybe solved when upgrading to latest Nabto version).
+- Static configuration of comm parameters
+- Only one serial bus supported at the moment.
+
+### - Bugs
 Please report via github or to info@connictro.de .
 
-## Example Output (credentials intentionally removed or obfuscated):
+### Example Output (credentials intentionally removed or obfuscated):
 
 lchain path: /home/connictro/ESP32/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc
 Toolchain version: crosstool-ng-1.22.0-80-g6c4433a
